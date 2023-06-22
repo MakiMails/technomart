@@ -30,7 +30,7 @@ function calcDiscount(price) {
 }
 
 function getRandomElemInArray(arr) {
-  return arr[getRandomIntNum(0, arr.length - 1)];
+  return arr[getRandomIntNum(0, arr.length)];
 }
 
 function writeInConsoleArr(arr) {
@@ -54,10 +54,7 @@ for (let i = 0; i < COUNT_PRODUCT; i++) {
   productsData.push(productData);
 }
 
-//writeInConsoleArr(productsData);
-
 //Заполнение каталога
-
 const templateProduct = document.querySelector("#catalog-item").content.querySelector(".catalog-item");
 const catalog = document.querySelector(".catalog-list");
 const typesFlag = {
@@ -87,18 +84,72 @@ function fillInСatalog() {
     imgProduct.src = productsData[i].urlPhoto;
     imgProduct.alt = productsData[i].title;
     titleProduct.textContent = productsData[i].title;
+    templateProduct.dataset.name = productsData[i].title;
     priceProduct.textContent = productsData[i].price;
     if (productsData[i].discount !== 0) {
       discountProduct.textContent = productsData[i].discount;
     }
-    const product = templateProduct.cloneNode(true);
-    containerForProducts.appendChild(product);
+    const cloneProduct = templateProduct.cloneNode(true);
+    cloneProduct.addEventListener("click",onClickProductCard);
+    if (productsData[i].flag !== "") {
+      cloneProduct.appendChild(createFlag(productsData[i].flag));
+    } 
+    containerForProducts.appendChild(cloneProduct);
   }
   catalog.appendChild(containerForProducts);
 }
 
-catalog.innerHTML = "";
-fillInСatalog();
-const flag = createFlag("new");
-console.log(flag);
-catalog.appendChild(flag);
+//Сортировка
+const sortingMethod = "price";
+const directionEnum = { UP: "up", DOWN: "down" };
+let direction;
+
+const sortingDirection = document.querySelector(".direction");
+const sortingUpBnt = sortingDirection.querySelector(".sorting-up-button");
+const sortingDownBnt = sortingDirection.querySelector(".sorting-down-button");
+
+function sortingCatalog(newDirection) {
+  direction = newDirection;
+  if (direction == directionEnum.UP) {
+    productsData.sort((a, b) => a.price - b.price);
+  } else {
+    productsData.sort((a, b) => b.price - a.price);
+  }
+  catalog.innerHTML = "";
+  fillInСatalog();
+}
+
+function onClickSortingUpBnt(evt) {
+  evt.preventDefault();
+  if (direction !== directionEnum.UP) {
+    sortingDownBnt.classList.remove("indicator-checked");
+    sortingUpBnt.classList.add("indicator-checked");
+    sortingCatalog(directionEnum.UP);
+  }
+}
+
+function onClickSortingDownBnt(evt) {
+  evt.preventDefault();
+  if (direction !== directionEnum.DOWN) {
+    sortingUpBnt.classList.remove("indicator-checked");
+    sortingDownBnt.classList.add("indicator-checked");
+    sortingCatalog(directionEnum.DOWN);
+  }
+}
+
+sortingUpBnt.addEventListener("click", onClickSortingUpBnt);
+sortingDownBnt.addEventListener("click", onClickSortingDownBnt);
+sortingCatalog(directionEnum.UP);
+
+//добавление в карзину 
+function onClickProductCard(evt){
+  const target = evt.target; 
+  console.log(target);
+  console.log(this);
+  if(target.classList.contains("buy")){
+    console.log("buy");
+  }
+  else if (target.classList.contains("bookmark")){
+    console.log("bookmark");
+  }
+}
