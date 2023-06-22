@@ -1,5 +1,4 @@
 ﻿// Общий код
-
 const COUNT_PRODUCT = 18;
 const DISCOUNT_AMOUNT = 15;
 const RARIO_MULTIPLE_DISCOUNT = 500;
@@ -141,15 +140,55 @@ sortingUpBnt.addEventListener("click", onClickSortingUpBnt);
 sortingDownBnt.addEventListener("click", onClickSortingDownBnt);
 sortingCatalog(directionEnum.UP);
 
-//добавление в карзину 
+//добавление в карзину
+const basketProducts = [];
+const bookmarkProducts = [];
+
+const bookmark = document.querySelector(".bookmarks"); 
+const bookmarksCounter = bookmark.querySelector("span");
+const basket = document.querySelector(".basket");
+const basketCounter = basket.querySelector("span");
+
+// console.log(bookmark);
+// console.log(bookmarksCounter);
+// console.log(basket);
+// console.log(basketCounter);
+
+
 function onClickProductCard(evt){
+  evt.preventDefault();
   const target = evt.target; 
   console.log(target);
   console.log(this);
   if(target.classList.contains("buy")){
-    console.log("buy");
+    basketProducts.push(this.dataset.name);
+    UpdateBasket();
   }
   else if (target.classList.contains("bookmark")){
-    console.log("bookmark");
+    bookmarkProducts.push(this.dataset.name);
+    UpdateBookmark();
   }
 }
+
+function UpdateBookmark(){
+  SetValueCounter(bookmark, bookmarksCounter, bookmarkProducts.length);
+}
+
+function UpdateBasket(){
+  SetValueCounter(basket,basketCounter, basketProducts.length);
+}
+
+
+
+function SetValueCounter(wrap,counter, int){
+  counter.textContent = int;
+  if(int > 0){
+    wrap.classList.add('add-product');
+  }
+  else{
+    wrap.classList.remove('add-product');
+  }
+}
+
+SetValueCounter(bookmark, bookmarksCounter, bookmarkProducts.length);
+SetValueCounter(basket, basketCounter, basketProducts.length);
