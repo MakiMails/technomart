@@ -89,10 +89,10 @@ function fillInСatalog() {
       discountProduct.textContent = productsData[i].discount;
     }
     const cloneProduct = templateProduct.cloneNode(true);
-    cloneProduct.addEventListener("click",onClickProductCard);
+    cloneProduct.addEventListener("click", onClickProductCard);
     if (productsData[i].flag !== "") {
       cloneProduct.appendChild(createFlag(productsData[i].flag));
-    } 
+    }
     containerForProducts.appendChild(cloneProduct);
   }
   catalog.appendChild(containerForProducts);
@@ -144,7 +144,7 @@ sortingCatalog(directionEnum.UP);
 const basketProducts = [];
 const bookmarkProducts = [];
 
-const bookmark = document.querySelector(".bookmarks"); 
+const bookmark = document.querySelector(".bookmarks");
 const bookmarksCounter = bookmark.querySelector("span");
 const basket = document.querySelector(".basket");
 const basketCounter = basket.querySelector("span");
@@ -154,41 +154,79 @@ const basketCounter = basket.querySelector("span");
 // console.log(basket);
 // console.log(basketCounter);
 
-
-function onClickProductCard(evt){
+function onClickProductCard(evt) {
   evt.preventDefault();
-  const target = evt.target; 
-  console.log(target);
-  console.log(this);
-  if(target.classList.contains("buy")){
+  const target = evt.target;
+  if (target.classList.contains("buy")) {
     basketProducts.push(this.dataset.name);
     UpdateBasket();
-  }
-  else if (target.classList.contains("bookmark")){
+  } else if (target.classList.contains("bookmark")) {
     bookmarkProducts.push(this.dataset.name);
     UpdateBookmark();
   }
 }
 
-function UpdateBookmark(){
+function SetValueCounter(wrap, counter, int) {
+  counter.textContent = int;
+  if (int > 0) {
+    wrap.classList.add("add-product");
+  } else {
+    wrap.classList.remove("add-product");
+  }
+}
+
+function UpdateBookmark() {
   SetValueCounter(bookmark, bookmarksCounter, bookmarkProducts.length);
 }
 
-function UpdateBasket(){
-  SetValueCounter(basket,basketCounter, basketProducts.length);
+function UpdateBasket() {
+  SetValueCounter(basket, basketCounter, basketProducts.length);
 }
 
 
 
-function SetValueCounter(wrap,counter, int){
-  counter.textContent = int;
-  if(int > 0){
-    wrap.classList.add('add-product');
-  }
-  else{
-    wrap.classList.remove('add-product');
+UpdateBookmark();
+UpdateBasket();
+
+//Модальное окно
+const contactsBnt = document.querySelector(".contacts-button");
+const modalWrite = document.querySelector(".modal-write");
+const modalWriteBntClose = modalWrite.querySelector(".modal-close"); 
+
+function onClickModalWriteBntClose(){
+  closeModalWrite();
+}
+
+function onDownKeyEscape(evt) {
+  if (evt.key === "Escape") {
+    evt.preventDefault();
+    closeModalWrite();
   }
 }
 
-SetValueCounter(bookmark, bookmarksCounter, bookmarkProducts.length);
-SetValueCounter(basket, basketCounter, basketProducts.length);
+function setEventsModalWrite(){
+  modalWriteBntClose.addEventListener("click",onClickModalWriteBntClose);
+  document.addEventListener("keydown", onDownKeyEscape);
+}
+
+function removeEventsModalWrite(){
+  modalWriteBntClose.removeEventListener("click",onClickModalWriteBntClose);
+  document.removeEventListener("keydown", onDownKeyEscape);
+}
+
+function showModalWrite(){
+  modalWrite.classList.add("modal-show");
+  setEventsModalWrite();
+}
+
+function closeModalWrite(){
+  modalWrite.classList.remove("modal-show");
+  removeEventsModalWrite();
+}
+
+function onClickContactBnt(evt){
+  evt.preventDefault();
+  showModalWrite();
+}
+
+contactsBnt.addEventListener("click", onClickContactBnt)
