@@ -260,14 +260,12 @@ function getallBandsProduct() {
 function onClickBrandFilterOptions(evt) {
   const target = evt.target;
   if (target.tagName === "INPUT") {
-    if(target.checked){
+    if (target.checked) {
       selectedBrand.push(target.dataset.brand);
-    }
-    else{
+    } else {
       const index = selectedBrand.indexOf(target.dataset.brand);
-      selectedBrand.splice(index,1);
+      selectedBrand.splice(index, 1);
     }
-    console.log(selectedBrand);
   }
 }
 
@@ -284,7 +282,6 @@ function CreateCheckBox() {
     inputFilterOption.dataset.brand = allBandsProduct[i];
     labelFilterOption.setAttribute("for", id);
     labelFilterOption.innerHTML = allBandsProduct[i];
-    console.log(templateFilterOption);
     containerForFilterOptions.appendChild(templateFilterOption.cloneNode(true));
   }
   brandFilterOptions.innerHTML = "";
@@ -293,3 +290,92 @@ function CreateCheckBox() {
 }
 
 CreateCheckBox();
+
+//task 7
+const rangeBlock = document.querySelector(".range__block");
+const scrollMin = rangeBlock.querySelector(".skroll_min");
+const skrollMax = rangeBlock.querySelector(".skroll_max");
+const rightEdgeScrollMax = rangeBlock.offsetWidth - skrollMax.offsetWidth;
+const rangeBar = rangeBlock.querySelector(".range__bar")
+
+
+let posLeftScrollMin = 0 ;
+scrollMin.style.left = posLeftScrollMin + 'px';
+let posLeftScrollMax = rangeBlock.offsetWidth - skrollMax.offsetWidth;
+skrollMax.style.left = posLeftScrollMax + 'px';
+
+rangeBar.style.width = "auto";
+rangeBar.style.marginLeft = posLeftScrollMin + 'px';
+rangeBar.style.marginRight = rangeBlock.offsetWidth - posLeftScrollMax - skrollMax.offsetWidth + 'px';
+
+scrollMin.onmousedown = function(evt) {
+  evt.preventDefault(); // предотвратить запуск выделения (действие браузера)
+
+  let shiftX = evt.clientX - scrollMin.getBoundingClientRect().left;
+  // shiftY здесь не нужен, слайдер двигается только по горизонтали
+
+  document.addEventListener('mousemove', onMouseMove);
+  document.addEventListener('mouseup', onMouseUp);
+
+  function onMouseMove(evt) {
+    posLeftScrollMin = evt.clientX - shiftX - rangeBlock.getBoundingClientRect().left;
+
+    // курсор вышел из слайдера => оставить бегунок в его границах.
+    if (posLeftScrollMin < 0) {
+      posLeftScrollMin = 0;
+    }
+    let rightEdge = posLeftScrollMax - scrollMin.offsetWidth;
+    if (posLeftScrollMin > rightEdge) {
+      posLeftScrollMin = rightEdge;
+    }
+    
+    scrollMin.style.left = posLeftScrollMin + 'px';
+    rangeBar.style.marginLeft = posLeftScrollMin + 'px';
+  }
+
+  function onMouseUp() {
+    document.removeEventListener('mouseup', onMouseUp);
+    document.removeEventListener('mousemove', onMouseMove);
+  }
+
+};
+
+skrollMax.ondragstart = function() {
+  return false;
+};
+
+skrollMax.onmousedown = function(evt) {
+  evt.preventDefault();
+
+  let shiftX = evt.clientX - skrollMax.getBoundingClientRect().left;
+
+  document.addEventListener('mousemove', onMouseMove);
+  document.addEventListener('mouseup', onMouseUp);
+
+  function onMouseMove(evt) {
+    posLeftScrollMax = evt.clientX - shiftX - rangeBlock.getBoundingClientRect().left;
+
+    if (posLeftScrollMax < posLeftScrollMin) {
+      posLeftScrollMax = posLeftScrollMin + skrollMax.offsetWidth;
+    }
+    if (posLeftScrollMax > rightEdgeScrollMax) {
+      posLeftScrollMax = rightEdgeScrollMax;
+    }
+
+    skrollMax.style.left = posLeftScrollMax + 'px';
+    rangeBar.style.marginRight = rangeBlock.offsetWidth - posLeftScrollMax - skrollMax.offsetWidth + 'px';
+  }
+
+  function onMouseUp() {
+    document.removeEventListener('mouseup', onMouseUp);
+    document.removeEventListener('mousemove', onMouseMove);
+  }
+
+};
+
+scrollMin.ondragstart = function() {
+  return false;
+};
+
+
+
