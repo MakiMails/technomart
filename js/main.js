@@ -4,6 +4,7 @@ const DISCOUNT_AMOUNT = 15;
 const RARIO_MULTIPLE_DISCOUNT = 500;
 const MIN_PRICE = 2000;
 const MAX_PRICE = 5000;
+const DEBOUNCE_INTERVAL = 500;
 
 const variantsUrlPhotoProducts = ["img/catalog/bosch-2000.jpg", "img/catalog/bosch-3000.jpg", "img/catalog/bosch-6000.jpg", "img/catalog/bosch-9000.jpg", "img/catalog/makita-td-110.jpg"];
 
@@ -101,14 +102,14 @@ function fillInСatalog() {
 //Сортировка
 const sortingMethod = "price";
 const directionEnum = { UP: "up", DOWN: "down" };
-let direction;
+let direction = directionEnum.UP;
 
 const sortingDirection = document.querySelector(".direction");
 const sortingUpBnt = sortingDirection.querySelector(".sorting-up-button");
 const sortingDownBnt = sortingDirection.querySelector(".sorting-down-button");
 
-function sortingCatalog(newDirection) {
-  direction = newDirection;
+function sortingCatalog() {
+  
   if (direction == directionEnum.UP) {
     productsData.sort((a, b) => a.price - b.price);
   } else {
@@ -123,7 +124,8 @@ function onClickSortingUpBnt(evt) {
   if (direction !== directionEnum.UP) {
     sortingDownBnt.classList.remove("indicator-checked");
     sortingUpBnt.classList.add("indicator-checked");
-    sortingCatalog(directionEnum.UP);
+    direction = directionEnum.UP;
+    debounce(sortingCatalog);
   }
 }
 
@@ -132,7 +134,8 @@ function onClickSortingDownBnt(evt) {
   if (direction !== directionEnum.DOWN) {
     sortingUpBnt.classList.remove("indicator-checked");
     sortingDownBnt.classList.add("indicator-checked");
-    sortingCatalog(directionEnum.DOWN);
+    direction = directionEnum.DOWN;
+    debounce(sortingCatalog);
   }
 }
 
@@ -230,3 +233,14 @@ function onClickContactBnt(evt){
 }
 
 contactsBnt.addEventListener("click", onClickContactBnt)
+
+
+//task 5
+const lastTimeout = null;
+
+function debounce(callbakc){
+  if(!lastTimeout){
+    clearTimeout(lastTimeout);
+    lastTimeout = setTimeout(callbakc, DEBOUNCE_INTERVAL);
+  }
+}
