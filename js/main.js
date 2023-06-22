@@ -109,7 +109,6 @@ const sortingUpBnt = sortingDirection.querySelector(".sorting-up-button");
 const sortingDownBnt = sortingDirection.querySelector(".sorting-down-button");
 
 function sortingCatalog() {
-  
   if (direction == directionEnum.UP) {
     productsData.sort((a, b) => a.price - b.price);
   } else {
@@ -186,17 +185,15 @@ function UpdateBasket() {
   SetValueCounter(basket, basketCounter, basketProducts.length);
 }
 
-
-
 UpdateBookmark();
 UpdateBasket();
 
 //Модальное окно
 const contactsBnt = document.querySelector(".contacts-button");
 const modalWrite = document.querySelector(".modal-write");
-const modalWriteBntClose = modalWrite.querySelector(".modal-close"); 
+const modalWriteBntClose = modalWrite.querySelector(".modal-close");
 
-function onClickModalWriteBntClose(){
+function onClickModalWriteBntClose() {
   closeModalWrite();
 }
 
@@ -207,40 +204,92 @@ function onDownKeyEscape(evt) {
   }
 }
 
-function setEventsModalWrite(){
-  modalWriteBntClose.addEventListener("click",onClickModalWriteBntClose);
+function setEventsModalWrite() {
+  modalWriteBntClose.addEventListener("click", onClickModalWriteBntClose);
   document.addEventListener("keydown", onDownKeyEscape);
 }
 
-function removeEventsModalWrite(){
-  modalWriteBntClose.removeEventListener("click",onClickModalWriteBntClose);
+function removeEventsModalWrite() {
+  modalWriteBntClose.removeEventListener("click", onClickModalWriteBntClose);
   document.removeEventListener("keydown", onDownKeyEscape);
 }
 
-function showModalWrite(){
+function showModalWrite() {
   modalWrite.classList.add("modal-show");
   setEventsModalWrite();
 }
 
-function closeModalWrite(){
+function closeModalWrite() {
   modalWrite.classList.remove("modal-show");
   removeEventsModalWrite();
 }
 
-function onClickContactBnt(evt){
+function onClickContactBnt(evt) {
   evt.preventDefault();
   showModalWrite();
 }
 
-contactsBnt.addEventListener("click", onClickContactBnt)
-
+contactsBnt.addEventListener("click", onClickContactBnt);
 
 //task 5
 const lastTimeout = null;
 
-function debounce(callbakc){
-  if(!lastTimeout){
+function debounce(callbakc) {
+  if (!lastTimeout) {
     clearTimeout(lastTimeout);
     lastTimeout = setTimeout(callbakc, DEBOUNCE_INTERVAL);
   }
 }
+
+//task 6
+const allBandsProduct = [];
+const templateFilterOption = document.querySelector("#filter-option").content.querySelector(".filter-option");
+const brandFilterOptions = document.querySelector(".brand-set .filter-list");
+const selectedBrand = [];
+
+function getallBandsProduct() {
+  const uniqueProductBrands = productsData.filter((product, index) => {
+    return productsData.findIndex((obj) => obj.brand === product.brand) === index;
+  });
+
+  for (let i = 0; i < uniqueProductBrands.length; i++) {
+    allBandsProduct.push(uniqueProductBrands[i].brand);
+  }
+}
+
+function onClickBrandFilterOptions(evt) {
+  const target = evt.target;
+  if (target.tagName === "INPUT") {
+    if(target.checked){
+      selectedBrand.push(target.dataset.brand);
+    }
+    else{
+      const index = selectedBrand.indexOf(target.dataset.brand);
+      selectedBrand.splice(index,1);
+    }
+    console.log(selectedBrand);
+  }
+}
+
+function CreateCheckBox() {
+  getallBandsProduct();
+  const inputFilterOption = templateFilterOption.querySelector(".filter-input-checkbox");
+  const labelFilterOption = templateFilterOption.querySelector("label");
+  const containerForFilterOptions = document.createDocumentFragment();
+  let id;
+  for (let i = 0; i < allBandsProduct.length; i++) {
+    inputFilterOption.name = allBandsProduct[i].toLowerCase();
+    id = "filter-" + allBandsProduct[i].toLowerCase();
+    inputFilterOption.id = id;
+    inputFilterOption.dataset.brand = allBandsProduct[i];
+    labelFilterOption.setAttribute("for", id);
+    labelFilterOption.innerHTML = allBandsProduct[i];
+    console.log(templateFilterOption);
+    containerForFilterOptions.appendChild(templateFilterOption.cloneNode(true));
+  }
+  brandFilterOptions.innerHTML = "";
+  brandFilterOptions.appendChild(containerForFilterOptions);
+  brandFilterOptions.addEventListener("click", onClickBrandFilterOptions);
+}
+
+CreateCheckBox();
