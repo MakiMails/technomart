@@ -110,7 +110,9 @@ const sortingUpBnt = sortingDirection.querySelector(".sorting-up-button");
 const sortingDownBnt = sortingDirection.querySelector(".sorting-down-button");
 
 function sortingCatalog() {
-  if (direction == directionEnum.UP) {
+  console.log(direction);
+  if (direction === directionEnum.UP) {
+    console.log("тут");
     productsData.sort((a, b) => a.price - b.price);
   } else {
     productsData.sort((a, b) => b.price - a.price);
@@ -136,12 +138,13 @@ function onClickSortingDownBnt(evt) {
     sortingDownBnt.classList.add("indicator-checked");
     direction = directionEnum.DOWN;
     debounce(sortingCatalog);
+    console.log(direction);
   }
 }
 
 sortingUpBnt.addEventListener("click", onClickSortingUpBnt);
 sortingDownBnt.addEventListener("click", onClickSortingDownBnt);
-sortingCatalog(directionEnum.UP);
+sortingCatalog();
 
 //добавление в карзину
 const basketProducts = [];
@@ -152,10 +155,6 @@ const bookmarksCounter = bookmark.querySelector("span");
 const basket = document.querySelector(".basket");
 const basketCounter = basket.querySelector("span");
 
-// console.log(bookmark);
-// console.log(bookmarksCounter);
-// console.log(basket);
-// console.log(basketCounter);
 
 function onClickProductCard(evt) {
   evt.preventDefault();
@@ -233,13 +232,13 @@ function onClickContactBnt(evt) {
 contactsBnt.addEventListener("click", onClickContactBnt);
 
 //task 5
-const lastTimeout = null;
+let lastTimeout = null;
 
 function debounce(callbakc) {
-  if (!lastTimeout) {
+  if (lastTimeout) {
     clearTimeout(lastTimeout);
-    lastTimeout = setTimeout(callbakc, DEBOUNCE_INTERVAL);
   }
+  lastTimeout = setTimeout(callbakc, DEBOUNCE_INTERVAL);
 }
 
 //task 6
@@ -385,12 +384,11 @@ scrollMin.ondragstart = function() {
 };
 
 function updatePriceFilds(){
-  const part = maxPrice / (rangeBlock.offsetWidth - scrollMax.offsetWidth);
-  minPriceInput.value = Math.round(posLeftScrollMin * part);
-  maxPriceInput.value = Math.round(posLeftScrollMax * part);
+  const part = (maxPrice - minPrice) / (rangeBlock.offsetWidth - scrollMax.offsetWidth);
+  minPriceInput.value = Math.round(posLeftScrollMin * part) + minPrice;
+  maxPriceInput.value = Math.round(posLeftScrollMax * part) + minPrice;
 }
 
-//тут доделать
 function getMinPrice(){
   return Math.min(...productsData.map(item => item.price));
 }
