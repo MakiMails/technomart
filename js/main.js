@@ -56,18 +56,18 @@ for (let i = 0; i < COUNT_PRODUCT; i++) {
 //Заполнение каталога
 const templateProduct = document.querySelector("#catalog-item").content.querySelector(".catalog-item");
 const catalog = document.querySelector(".catalog-list");
-const typesFlag = {
+const flagTypes = {
   new: "Новинка",
   promo: "Акция",
 };
 
-function createFlag(typeFlag) {
+function createFlag(flagType) {
   const flag = document.createElement("div");
   flag.classList.add("flag");
-  flag.classList.add("flag-" + typeFlag);
+  flag.classList.add("flag-" + flagType);
   const flagText = document.createElement("span");
   flagText.classList.add("visually-hidden");
-  flagText.textContent = typesFlag[typeFlag];
+  flagText.textContent = flagTypes[flagType];
   flag.appendChild(flagText);
   return flag;
 }
