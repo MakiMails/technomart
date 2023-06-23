@@ -73,6 +73,7 @@ function createFlag(flagType) {
 }
 
 function fillInСatalog() {
+  sortingCatalog();
   const containerForProducts = document.createDocumentFragment();
   const imgProductBlock = templateProduct.querySelector(".image");
   const imgProduct = imgProductBlock.children[0];
@@ -114,7 +115,6 @@ function sortingCatalog() {
     productsData.sort((a, b) => b.price - a.price);
   }
   catalog.innerHTML = "";
-  fillInСatalog();
 }
 
 function onClickSortingUpBnt(evt) {
@@ -123,7 +123,7 @@ function onClickSortingUpBnt(evt) {
     sortingDownBnt.classList.remove("indicator-checked");
     sortingUpBnt.classList.add("indicator-checked");
     direction = directionTypes.UP;
-    debounce(sortingCatalog);
+    debounce(fillInСatalog);
   }
 }
 
@@ -133,13 +133,13 @@ function onClickSortingDownBnt(evt) {
     sortingUpBnt.classList.remove("indicator-checked");
     sortingDownBnt.classList.add("indicator-checked");
     direction = directionTypes.DOWN;
-    debounce(sortingCatalog);
+    debounce(fillInСatalog);
   }
 }
 
 sortingUpBnt.addEventListener("click", onClickSortingUpBnt);
 sortingDownBnt.addEventListener("click", onClickSortingDownBnt);
-sortingCatalog();
+fillInСatalog();
 
 //добавление в карзину
 const basketProducts = [];
