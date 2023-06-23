@@ -23,8 +23,7 @@ function getRandomIntNum(minNum, maxNum) {
 function calcDiscount(price) {
   let discount = 0;
   if (getRandomIntNum(0, 2) == 1) {
-    discount = price * (DISCOUNT_AMOUNT / 100);
-    discount = Math.floor(discount / RARIO_MULTIPLE_DISCOUNT) * RARIO_MULTIPLE_DISCOUNT;
+    discount = Math.floor(price * (1 + DISCOUNT_AMOUNT / 100) / RARIO_MULTIPLE_DISCOUNT) * RARIO_MULTIPLE_DISCOUNT;
   }
   return discount;
 }
@@ -57,7 +56,6 @@ for (let i = 0; i < COUNT_PRODUCT; i++) {
 //Заполнение каталога
 const templateProduct = document.querySelector("#catalog-item").content.querySelector(".catalog-item");
 const catalog = document.querySelector(".catalog-list");
-
 const typesFlag = {
   new: "Новинка",
   promo: "Акция",
@@ -102,17 +100,15 @@ function fillInСatalog() {
 
 //Сортировка
 const sortingMethod = "price";
-const directionEnum = { UP: "up", DOWN: "down" };
-let direction = directionEnum.UP;
+const directionTypes = { UP: "up", DOWN: "down" };
+let direction = directionTypes.UP;
 
 const sortingDirection = document.querySelector(".direction");
 const sortingUpBnt = sortingDirection.querySelector(".sorting-up-button");
 const sortingDownBnt = sortingDirection.querySelector(".sorting-down-button");
 
 function sortingCatalog() {
-  console.log(direction);
-  if (direction === directionEnum.UP) {
-    console.log("тут");
+  if (direction === directionTypes.UP) {
     productsData.sort((a, b) => a.price - b.price);
   } else {
     productsData.sort((a, b) => b.price - a.price);
@@ -123,22 +119,21 @@ function sortingCatalog() {
 
 function onClickSortingUpBnt(evt) {
   evt.preventDefault();
-  if (direction !== directionEnum.UP) {
+  if (direction !== directionTypes.UP) {
     sortingDownBnt.classList.remove("indicator-checked");
     sortingUpBnt.classList.add("indicator-checked");
-    direction = directionEnum.UP;
+    direction = directionTypes.UP;
     debounce(sortingCatalog);
   }
 }
 
 function onClickSortingDownBnt(evt) {
   evt.preventDefault();
-  if (direction !== directionEnum.DOWN) {
+  if (direction !== directionTypes.DOWN) {
     sortingUpBnt.classList.remove("indicator-checked");
     sortingDownBnt.classList.add("indicator-checked");
-    direction = directionEnum.DOWN;
+    direction = directionTypes.DOWN;
     debounce(sortingCatalog);
-    console.log(direction);
   }
 }
 
@@ -149,12 +144,10 @@ sortingCatalog();
 //добавление в карзину
 const basketProducts = [];
 const bookmarkProducts = [];
-
 const bookmark = document.querySelector(".bookmarks");
 const bookmarksCounter = bookmark.querySelector("span");
 const basket = document.querySelector(".basket");
 const basketCounter = basket.querySelector("span");
-
 
 function onClickProductCard(evt) {
   evt.preventDefault();
@@ -269,7 +262,7 @@ function onClickBrandFilterOptions(evt) {
   }
 }
 
-function CreateCheckBox() {
+function fillListBrandFilterOptions() {
   getallBandsProduct();
   const inputFilterOption = templateFilterOption.querySelector(".filter-input-checkbox");
   const labelFilterOption = templateFilterOption.querySelector("label");
@@ -289,7 +282,7 @@ function CreateCheckBox() {
   brandFilterOptions.addEventListener("click", onClickBrandFilterOptions);
 }
 
-CreateCheckBox();
+fillListBrandFilterOptions();
 
 //task 7
 const rangeBlock = document.querySelector(".range__block");
@@ -398,5 +391,3 @@ function getMaxPrice(){
 }
 
 updatePriceFilds();
-
-//Доделать подсчет скидки правильный
