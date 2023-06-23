@@ -57,6 +57,7 @@ for (let i = 0; i < COUNT_PRODUCT; i++) {
 //Заполнение каталога
 const templateProduct = document.querySelector("#catalog-item").content.querySelector(".catalog-item");
 const catalog = document.querySelector(".catalog-list");
+
 const typesFlag = {
   new: "Новинка",
   promo: "Акция",
@@ -294,19 +295,23 @@ CreateCheckBox();
 //task 7
 const rangeBlock = document.querySelector(".range__block");
 const scrollMin = rangeBlock.querySelector(".skroll_min");
-const skrollMax = rangeBlock.querySelector(".skroll_max");
-const rightEdgeScrollMax = rangeBlock.offsetWidth - skrollMax.offsetWidth;
-const rangeBar = rangeBlock.querySelector(".range__bar")
-
+const scrollMax = rangeBlock.querySelector(".skroll_max");
+const rangeBar = rangeBlock.querySelector(".range__bar");
+const priceFilds = document.querySelector(".price-filds");
+const minPriceInput = priceFilds.querySelector("#min-price");
+const maxPriceInput = priceFilds.querySelector("#max-price");
+const minPrice = getMinPrice();
+const maxPrice = getMaxPrice();
+const rightEdgeScrollMax = rangeBlock.offsetWidth - scrollMax.offsetWidth;
 
 let posLeftScrollMin = 0 ;
 scrollMin.style.left = posLeftScrollMin + 'px';
-let posLeftScrollMax = rangeBlock.offsetWidth - skrollMax.offsetWidth;
-skrollMax.style.left = posLeftScrollMax + 'px';
+let posLeftScrollMax = rangeBlock.offsetWidth - scrollMax.offsetWidth;
+scrollMax.style.left = posLeftScrollMax + 'px';
 
 rangeBar.style.width = "auto";
 rangeBar.style.marginLeft = posLeftScrollMin + 'px';
-rangeBar.style.marginRight = rangeBlock.offsetWidth - posLeftScrollMax - skrollMax.offsetWidth + 'px';
+rangeBar.style.marginRight = rangeBlock.offsetWidth - posLeftScrollMax - scrollMax.offsetWidth + 'px';
 
 scrollMin.onmousedown = function(evt) {
   evt.preventDefault(); // предотвратить запуск выделения (действие браузера)
@@ -320,7 +325,7 @@ scrollMin.onmousedown = function(evt) {
   function onMouseMove(evt) {
     posLeftScrollMin = evt.clientX - shiftX - rangeBlock.getBoundingClientRect().left;
 
-    // курсор вышел из слайдера => оставить бегунок в его границах.
+    // курсор вышел из слайдера => оставить бегунок в его границах или ударился об другой
     if (posLeftScrollMin < 0) {
       posLeftScrollMin = 0;
     }
@@ -329,6 +334,7 @@ scrollMin.onmousedown = function(evt) {
       posLeftScrollMin = rightEdge;
     }
     
+    updatePriceFilds();
     scrollMin.style.left = posLeftScrollMin + 'px';
     rangeBar.style.marginLeft = posLeftScrollMin + 'px';
   }
@@ -340,14 +346,14 @@ scrollMin.onmousedown = function(evt) {
 
 };
 
-skrollMax.ondragstart = function() {
+scrollMax.ondragstart = function() {
   return false;
 };
 
-skrollMax.onmousedown = function(evt) {
+scrollMax.onmousedown = function(evt) {
   evt.preventDefault();
 
-  let shiftX = evt.clientX - skrollMax.getBoundingClientRect().left;
+  let shiftX = evt.clientX - scrollMax.getBoundingClientRect().left;
 
   document.addEventListener('mousemove', onMouseMove);
   document.addEventListener('mouseup', onMouseUp);
@@ -356,14 +362,15 @@ skrollMax.onmousedown = function(evt) {
     posLeftScrollMax = evt.clientX - shiftX - rangeBlock.getBoundingClientRect().left;
 
     if (posLeftScrollMax < posLeftScrollMin) {
-      posLeftScrollMax = posLeftScrollMin + skrollMax.offsetWidth;
+      posLeftScrollMax = posLeftScrollMin + scrollMax.offsetWidth;
     }
     if (posLeftScrollMax > rightEdgeScrollMax) {
       posLeftScrollMax = rightEdgeScrollMax;
     }
 
-    skrollMax.style.left = posLeftScrollMax + 'px';
-    rangeBar.style.marginRight = rangeBlock.offsetWidth - posLeftScrollMax - skrollMax.offsetWidth + 'px';
+    updatePriceFilds();
+    scrollMax.style.left = posLeftScrollMax + 'px';
+    rangeBar.style.marginRight = rangeBlock.offsetWidth - posLeftScrollMax - scrollMax.offsetWidth + 'px';
   }
 
   function onMouseUp() {
@@ -377,5 +384,21 @@ scrollMin.ondragstart = function() {
   return false;
 };
 
+function updatePriceFilds(){
+  const part = maxPrice / (rangeBlock.offsetWidth - scrollMax.offsetWidth);
+  minPriceInput.value = Math.round(posLeftScrollMin * part);
+  maxPriceInput.value = Math.round(posLeftScrollMax * part);
+}
 
+//тут доделать
+function getMinPrice(){
+  return Math.min(...productsData.map(item => item.price));
+}
 
+function getMaxPrice(){
+  return Math.max(...productsData.map(item => item.price));
+}
+
+updatePriceFilds();
+
+//Доделать подсчет скидки правильный
